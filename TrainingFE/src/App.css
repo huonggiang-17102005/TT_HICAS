@@ -1,0 +1,23 @@
+.ant-menu-item-selected {
+  color: #01AEEF !important;
+  background-color: transparent !important;
+  border-bottom: 1px solid #01AEEF;
+  border-radius: 0 !important;
+}
+
+.ant-menu-item-selected .anticon {
+  color: #01AEEF !important;
+}
+
+.ant-menu-item {
+  color: #000000 !important;
+  height: 56px !important;
+  line-height: 56px !important;
+  margin: 0 !important;
+  width: 100% !important;
+  border-radius: 0 !important;
+}
+
+.ant-menu-item .anticon {
+  color: #000000;
+}
