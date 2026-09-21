@@ -10,9 +10,26 @@ const calculateTotals = (items: ICartItem[]) => {
   return { subtotal, tax, total };
 };
 
+// Hàm lấy tên giỏ hàng riêng theo ID của người đăng nhập (ví dụ cart_items_1, cart_items_2)
+const getCartStorageKey = (): string => {
+  try {
+    const auth = localStorage.getItem('auth_user');
+    if (auth) {
+      const user = JSON.parse(auth);
+      if (user && user.id) {
+        return `cart_items_${user.id}`;
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return 'cart_items_guest';
+};
+
 const saveToLocalStorage = (items: ICartItem[]) => {
   try {
-    localStorage.setItem('cart_items', JSON.stringify(items));
+    const key = getCartStorageKey();
+    localStorage.setItem(key, JSON.stringify(items));
   } catch {
     // ignore
   }
@@ -20,7 +37,8 @@ const saveToLocalStorage = (items: ICartItem[]) => {
 
 const loadInitialState = (): ICartState => {
   try {
-    const saved = localStorage.getItem('cart_items');
+    const key = getCartStorageKey();
+    const saved = localStorage.getItem(key);
     if (saved) {
       const items: ICartItem[] = JSON.parse(saved);
       const { subtotal, tax, total } = calculateTotals(items);
@@ -38,6 +56,14 @@ export const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
+    syncCartForUser: (state) => {
+      const newState = loadInitialState();
+      state.items = newState.items;
+      state.subtotal = newState.subtotal;
+      state.tax = newState.tax;
+      state.total = newState.total;
+    },
+
     addToCart: (state, action: PayloadAction<{ product: IProduct; quantity?: number }>) => {
       const { product, quantity = 1 } = action.payload;
       const existingIndex = state.items.findIndex((item) => item.product.id === product.id);
@@ -86,6 +112,6 @@ export const cartSlice = createSlice({
   },
 });
 
-export const { addToCart, updateQuantity, removeFromCart } = cartSlice.actions;
+export const { syncCartForUser, addToCart, updateQuantity, removeFromCart } = cartSlice.actions;
 
 export default cartSlice.reducer;

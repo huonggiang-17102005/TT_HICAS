@@ -24,6 +24,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+    const savedAuth = localStorage.getItem('auth_user');
+  const currentUser = savedAuth ? JSON.parse(savedAuth) : null;
+  const currentAvatar = userAvatar || currentUser?.image || 'https://dummyjson.com/icon/emilys/128';
 
   const getSelectedKey = () => {
     if (location.pathname.startsWith('/cart')) return 'cart';
@@ -108,10 +111,10 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
           </Title>
         </Space>
 
-        <Avatar
+                <Avatar
           size={44}
-          src={userAvatar || 'https://dummyjson.com/icon/emilys/128'}
-          icon={<UserOutlined style={{ fontSize: 22 }} />}
+src={currentAvatar} 
+         icon={<UserOutlined style={{ fontSize: 22 }} />}
           onClick={() => navigate('/profile')}
           style={{
             backgroundColor: '#ffffff',

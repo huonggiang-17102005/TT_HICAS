@@ -9,11 +9,14 @@ export const ProfilePage: React.FC = () => {
   const [user, setUser] = useState<IUserProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
+    useEffect(() => {
     const loadProfile = async () => {
       try {
         setLoading(true);
-        const data = await userService.getUserProfile(1);
+        const savedAuth = localStorage.getItem('auth_user');
+        const userId = savedAuth ? JSON.parse(savedAuth).id : 1;
+        
+        const data = await userService.getUserProfile(userId);
         setUser(data);
       } catch {
         message.error('Không thể tải thông tin cá nhân!');
@@ -24,6 +27,7 @@ export const ProfilePage: React.FC = () => {
 
     loadProfile();
   }, []);
+
 
   if (loading) {
     return (

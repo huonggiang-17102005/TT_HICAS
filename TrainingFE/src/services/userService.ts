@@ -20,8 +20,27 @@ export interface IUserProfile {
   };
 }
 
+export interface ILoginResponse {
+  id: number;
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  gender: string;
+  image: string;
+  accessToken: string;
+}
+
 export const userService = {
   getUserProfile: (id = 1): Promise<IUserProfile> => {
     return axiosClient.get(`/users/${id}`);
+  },
+
+  login: (username: string, password: string): Promise<ILoginResponse> => {
+    return axiosClient.post('/auth/login', {
+      username,
+      password,
+      expiresInMins: 60,
+    });
   },
 };

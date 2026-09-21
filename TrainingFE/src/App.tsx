@@ -4,6 +4,7 @@ import { ShopPage } from './pages/Shop/ShopPage.tsx';
 import { ProductDetailPage } from './pages/Shop/ProductDetailPage.tsx';
 import { CartPage } from './pages/Cart/CartPage.tsx';
 import { ProfilePage } from './pages/Profile/ProfilePage.tsx';
+import { LoginPage } from './pages/Login/LoginPage.tsx';
 
 const ProductDetailWrapper = () => {
   const { id } = useParams<{ id: string }>();
@@ -20,16 +21,24 @@ function App() {
   const navigate = useNavigate();
 
   return (
-    <MainLayout>
-      <Routes>
-        <Route path="/" element={<Navigate to="/shop" replace />} />
-        <Route path="/shop" element={<ShopPage onSelectProduct={(id) => navigate(`/product/${id}`)} />} />
-        <Route path="/product/:id" element={<ProductDetailWrapper />} />
-        <Route path="/cart" element={<CartPage onBackToShop={() => navigate('/shop')} />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="*" element={<Navigate to="/shop" replace />} />
-      </Routes>
-    </MainLayout>
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route
+        path="/*"
+        element={
+          <MainLayout>
+            <Routes>
+              <Route path="/" element={<Navigate to="/shop" replace />} />
+              <Route path="/shop" element={<ShopPage onSelectProduct={(id) => navigate(`/product/${id}`)} />} />
+              <Route path="/product/:id" element={<ProductDetailWrapper />} />
+              <Route path="/cart" element={<CartPage onBackToShop={() => navigate('/shop')} />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="*" element={<Navigate to="/shop" replace />} />
+            </Routes>
+          </MainLayout>
+        }
+      />
+    </Routes>
   );
 }
 
