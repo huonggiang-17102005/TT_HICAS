@@ -10,7 +10,6 @@ const calculateTotals = (items: ICartItem[]) => {
   return { subtotal, tax, total };
 };
 
-// Hàm lấy tên giỏ hàng riêng theo ID của người đăng nhập (ví dụ cart_items_1, cart_items_2)
 const getCartStorageKey = (): string => {
   try {
     const auth = localStorage.getItem('auth_user');
@@ -21,7 +20,6 @@ const getCartStorageKey = (): string => {
       }
     }
   } catch {
-    // ignore
   }
   return 'cart_items_guest';
 };
@@ -31,7 +29,6 @@ const saveToLocalStorage = (items: ICartItem[]) => {
     const key = getCartStorageKey();
     localStorage.setItem(key, JSON.stringify(items));
   } catch {
-    // ignore
   }
 };
 
@@ -45,7 +42,6 @@ const loadInitialState = (): ICartState => {
       return { items, subtotal, tax, total };
     }
   } catch {
-    // ignore
   }
   return { items: [], subtotal: 0, tax: 0, total: 0 };
 };
