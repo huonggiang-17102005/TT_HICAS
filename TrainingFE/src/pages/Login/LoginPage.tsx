@@ -5,13 +5,12 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo.png';
 import loginBg from '../../assets/login.png';
 import { userService } from '../../services/userService.ts';
-import { useDispatch } from 'react-redux';
-import { syncCartForUser } from '../../store/cartSlice.ts';
+import { useCart } from '../../hooks/useCart.ts';
 
 export const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const { syncCartForUser } = useCart();
 
   const handleLogin = async (values: { username: string; password: string; remember?: boolean }) => {
     try {
@@ -20,7 +19,7 @@ export const LoginPage: React.FC = () => {
       localStorage.setItem('auth_user', JSON.stringify(res));
       localStorage.setItem('access_token', res.accessToken);
       message.success(`Xin chào, ${res.firstName} ${res.lastName}!`);
-      dispatch(syncCartForUser());
+      syncCartForUser();
       navigate('/shop');
     } catch {
       message.error('Tên đăng nhập hoặc mật khẩu không đúng!');

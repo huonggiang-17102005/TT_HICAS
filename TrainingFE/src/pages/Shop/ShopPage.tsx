@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { Row, Col, Input, Spin, Typography, Space, message, Empty, Popover } from 'antd';
+import React, { useState, useMemo } from 'react';
+import { Row, Col, Input, Spin, Typography, Space, Empty, Popover } from 'antd';
 import { SearchOutlined, FilterFilled } from '@ant-design/icons';
-import { productService } from '../../services/productService.ts';
-import type { IProduct } from '../../types/product.types.ts';
 import { ProductCard } from '../../components/shop/ProductCard.tsx';
 import { ProductFilter } from '../../components/shop/ProductFilter.tsx';
+import { useProducts, useSearchProducts } from '../../hooks/useProducts.ts';
 
 const { Title, Text } = Typography;
 
@@ -13,65 +12,20 @@ interface ShopPageProps {
 }
 
 export const ShopPage: React.FC<ShopPageProps> = ({ onSelectProduct }) => {
-  const [products, setProducts] = useState<IProduct[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [activeSearch, setActiveSearch] = useState<string>('');
 
-  // Filter states
+  const { data: defaultProducts = [], isLoading: loadingDefault } = useProducts();
+  const { data: searchProducts = [], isLoading: loadingSearch } = useSearchProducts(activeSearch);
+
+  const products = activeSearch ? searchProducts : defaultProducts;
+  const loading = activeSearch ? loadingSearch : loadingDefault;
+
   const [filterOpen, setFilterOpen] = useState<boolean>(false);
   const [minPrice, setMinPrice] = useState<number>(0);
   const [maxPrice, setMaxPrice] = useState<number | null>(10000000);
   const [minRating, setMinRating] = useState<number>(0);
   const [maxRating, setMaxRating] = useState<number>(5);
-
-  const loadProducts = async () => {
-    try {
-      setLoading(true);
-      const data = await productService.getProducts();
-      setProducts(data.products);
-    } catch {
-      message.error('Không thể tải danh sách sản phẩm!');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    let ignore = false;
-    productService
-      .getProducts()
-      .then((data) => {
-        if (!ignore) {
-          setProducts(data.products);
-          setLoading(false);
-        }
-      })
-      .catch(() => {
-        if (!ignore) {
-          message.error('Không thể tải danh sách sản phẩm!');
-          setLoading(false);
-        }
-      });
-
-    return () => {
-      ignore = true;
-    };
-  }, []);
-
-  const handleSearch = async (value: string) => {
-    try {
-      setLoading(true);
-      if (!value.trim()) {
-        await loadProducts();
-      } else {
-        const data = await productService.searchProducts(value.trim());
-        setProducts(data.products);
-      }
-    } catch {
-      message.error('Lỗi khi tìm kiếm!');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const filteredProducts = useMemo(() => {
     return products.filter((item) => {
@@ -112,11 +66,13 @@ export const ShopPage: React.FC<ShopPageProps> = ({ onSelectProduct }) => {
         <Space size={16} align="center">
           <Input
             placeholder="Search..."
+            value={searchTerm}
             suffix={<SearchOutlined style={{ fontSize: 20, color: '#000000' }} />}
-            onPressEnter={(e) => handleSearch((e.target as HTMLInputElement).value)}
+            onPressEnter={(e) => setActiveSearch((e.target as HTMLInputElement).value.trim())}
             onChange={(e) => {
+              setSearchTerm(e.target.value);
               if (!e.target.value.trim()) {
-                loadProducts();
+                setActiveSearch('');
               }
             }}
             style={{
@@ -192,4 +148,3 @@ export const ShopPage: React.FC<ShopPageProps> = ({ onSelectProduct }) => {
     </div>
   );
 };
-

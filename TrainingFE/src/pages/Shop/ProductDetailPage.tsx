@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Typography, Rate, Button, Spin, Space, Badge, message } from 'antd';
 import { ShoppingCartOutlined } from '@ant-design/icons';
-import { productService } from '../../services/productService.ts';
 import type { IProduct } from '../../types/product.types.ts';
-import { useAppDispatch, useAppSelector } from '../../store/index.ts';
-import { addToCart } from '../../store/cartSlice.ts';
+import { useProductDetail } from '../../hooks/useProducts.ts';
+import { useCart } from '../../hooks/useCart.ts';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -19,29 +18,9 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
   productId = 1,
   onBackToShop,
 }) => {
-  const [product, setProduct] = useState<IProduct | null>(null);
-  const [selectedImage, setSelectedImage] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(true);
-  const dispatch = useAppDispatch();
-  const cartItems = useAppSelector((state) => state.cart.items);
-  const totalItemsInCart = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-
-  useEffect(() => {
-    const fetchDetail = async () => {
-      try {
-        setLoading(true);
-        const data = await productService.getProductById(productId);
-        setProduct(data);
-        setSelectedImage(data.thumbnail);
-      } catch {
-        message.error('Không thể tải chi tiết sản phẩm!');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDetail();
-  }, [productId]);
+  const { data: product, isLoading: loading } = useProductDetail(productId);
+  const { addToCart, totalItemsCount } = useCart();
+  const [activeImage, setActiveImage] = useState<string>('');
 
   const formatPriceVND = (usdPrice: number) => {
     const vndPrice = Math.round(usdPrice * 25000);
@@ -60,6 +39,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     return <div>Không tìm thấy thông tin sản phẩm.</div>;
   }
 
+  const currentDisplayImage = activeImage || product.thumbnail;
+
   return (
     <div style={{ background: '#ffffff', minHeight: '100%' }}>
       <Title level={2} style={{ margin: 0, fontWeight: 800, fontSize: 28 }}>
@@ -72,47 +53,53 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           justifyContent: 'space-between',
           alignItems: 'center',
           marginTop: 8,
-          marginBottom: 32,
-          borderBottom: '1px solid #000000',
-          paddingBottom: 12,
+          marginBottom: 36,
         }}
       >
-        <Space size={8}>
+        <Space size={8} style={{ fontSize: 16 }}>
           <span
             onClick={onBackToShop}
-            style={{
-              fontSize: 18,
-              color: '#333333',
-              cursor: 'pointer',
-            }}
+            style={{ cursor: 'pointer', color: '#666666', textDecoration: 'none' }}
           >
             Shop
           </span>
-          <span style={{ fontSize: 18, color: '#333333' }}>/</span>
-          <span style={{ fontSize: 18, fontWeight: 700, color: '#000000' }}>
-            Product
-          </span>
+          <span style={{ color: '#999999' }}>&gt;</span>
+          <span style={{ color: '#000000', fontWeight: 600 }}>{product.title}</span>
         </Space>
 
-        <Badge count={totalItemsInCart} color="#B865D8" style={{ fontSize: 13 }}>
-          <ShoppingCartOutlined style={{ fontSize: 32, color: '#000000', cursor: 'pointer' }} />
+        <Badge count={totalItemsCount} size="small" offset={[-2, 4]}>
+          <ShoppingCartOutlined
+            style={{ fontSize: 28, color: '#000000', cursor: 'pointer' }}
+            onClick={() => {
+              if (onBackToShop) {
+                window.location.href = '/cart';
+              }
+            }}
+          />
         </Badge>
       </div>
 
-      <div style={{ display: 'flex', gap: 60, flexWrap: 'wrap' }}>
-        <div style={{ width: 340, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: 60,
+          alignItems: 'flex-start',
+          flexWrap: 'wrap',
+        }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <div
             style={{
-              width: '100%',
+              width: 380,
               height: 380,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: 16,
+              background: '#ffffff',
             }}
           >
             <img
-              src={selectedImage || product.thumbnail}
+              src={currentDisplayImage}
               alt={product.title}
               style={{
                 maxWidth: '100%',
@@ -122,49 +109,38 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             />
           </div>
 
-          <div style={{ display: 'flex', gap: 12, marginTop: 16 }}>
-            {product.images && product.images.length > 0 ? (
-              product.images.slice(0, 4).map((img, idx) => (
+          {product.images && product.images.length > 0 && (
+            <div style={{ display: 'flex', gap: 14 }}>
+              {product.images.slice(0, 4).map((img, idx) => (
                 <div
                   key={idx}
-                  onClick={() => setSelectedImage(img)}
+                  onClick={() => setActiveImage(img)}
                   style={{
-                    width: 60,
-                    height: 60,
-                    border: selectedImage === img ? '2px solid #01AEEF' : '1px solid #d9d9d9',
-                    borderRadius: 4,
+                    width: 70,
+                    height: 70,
                     padding: 4,
-                    cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
+                    border: currentDisplayImage === img ? '2px solid #01AEEF' : '1px solid #d9d9d9',
+                    borderRadius: 4,
+                    cursor: 'pointer',
+                    background: '#ffffff',
                   }}
                 >
                   <img
                     src={img}
-                    alt=""
-                    style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                    alt="thumbnail"
+                    style={{
+                      maxWidth: '100%',
+                      maxHeight: '100%',
+                      objectFit: 'contain',
+                    }}
                   />
                 </div>
-              ))
-            ) : (
-              <div
-                style={{
-                  width: 60,
-                  height: 60,
-                  border: '2px solid #01AEEF',
-                  borderRadius: 4,
-                  padding: 4,
-                }}
-              >
-                <img
-                  src={product.thumbnail}
-                  alt=""
-                  style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
-                />
-              </div>
-            )}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div style={{ flex: 1, minWidth: 320, maxWidth: 620 }}>
@@ -223,8 +199,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 borderRadius: 6,
                 boxShadow: 'none',
               }}
-              onClick={() => {
-                dispatch(addToCart({ product, quantity: 1 }));
+              onClick={async () => {
+                await addToCart(product, 1);
                 message.success('Đã chọn Mua Ngay!');
               }}
             >
@@ -243,8 +219,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 borderRadius: 6,
                 boxShadow: 'none',
               }}
-              onClick={() => {
-                dispatch(addToCart({ product, quantity: 1 }));
+              onClick={async () => {
+                await addToCart(product, 1);
                 message.success(`Đã thêm "${product.title}" vào giỏ hàng!`);
               }}
             >

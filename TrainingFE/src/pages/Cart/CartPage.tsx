@@ -1,8 +1,7 @@
 import React from 'react';
 import { Typography, Empty, Button } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
-import { useAppDispatch, useAppSelector } from '../../store/index.ts';
-import { updateQuantity, removeFromCart } from '../../store/cartSlice.ts';
+import { useCart } from '../../hooks/useCart.ts';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -11,10 +10,7 @@ interface CartPageProps {
 }
 
 export const CartPage: React.FC<CartPageProps> = ({ onBackToShop }) => {
-  const dispatch = useAppDispatch();
-  const { items, subtotal, tax, total } = useAppSelector((state) => state.cart);
-
-  const totalItemsCount = items.reduce((sum, item) => sum + item.quantity, 0);
+  const { items, subtotal, tax, total, totalItemsCount, updateQuantity, removeFromCart } = useCart();
 
   const formatPriceVND = (usdPrice: number) => {
     const vndPrice = Math.round(usdPrice * 25000);
@@ -67,7 +63,7 @@ export const CartPage: React.FC<CartPageProps> = ({ onBackToShop }) => {
               }}
             >
               <div
-                onClick={() => dispatch(removeFromCart(item.product.id))}
+                onClick={() => removeFromCart(item.product.id)}
                 style={{
                   position: 'absolute',
                   top: 0,
@@ -147,9 +143,7 @@ export const CartPage: React.FC<CartPageProps> = ({ onBackToShop }) => {
                 }}
               >
                 <span
-                  onClick={() =>
-                    dispatch(updateQuantity({ productId: item.product.id, quantity: item.quantity + 1 }))
-                  }
+                  onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
                   style={{ cursor: 'pointer', padding: '4px 8px' }}
                 >
                   +
@@ -158,9 +152,7 @@ export const CartPage: React.FC<CartPageProps> = ({ onBackToShop }) => {
                 <span style={{ minWidth: 20, textAlign: 'center' }}>{item.quantity}</span>
 
                 <span
-                  onClick={() =>
-                    dispatch(updateQuantity({ productId: item.product.id, quantity: item.quantity - 1 }))
-                  }
+                  onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
                   style={{ cursor: 'pointer', padding: '4px 8px' }}
                 >
                   -
