@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Rate, Button, Spin, Space, Badge, message } from 'antd';
 import { ShoppingCartOutlined } from '@ant-design/icons';
+import { useTranslation } from '../../i18n/index.ts';
 import { productService } from '../../services/productService.ts';
 import type { IProduct } from '../../types/product.types.ts';
 import { useAppDispatch, useAppSelector } from '../../store/index.ts';
@@ -19,6 +20,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
   productId = 1,
   onBackToShop,
 }) => {
+  const { t } = useTranslation();
   const [product, setProduct] = useState<IProduct | null>(null);
   const [selectedImage, setSelectedImage] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
@@ -34,14 +36,14 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
         setProduct(data);
         setSelectedImage(data.thumbnail);
       } catch {
-        message.error('Không thể tải chi tiết sản phẩm!');
+        message.error(t('product.loadError'));
       } finally {
         setLoading(false);
       }
     };
 
     fetchDetail();
-  }, [productId]);
+  }, [productId, t]);
 
   const formatPriceVND = (usdPrice: number) => {
     const vndPrice = Math.round(usdPrice * 25000);
@@ -51,19 +53,21 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: '100px 0' }}>
-        <Spin size="large" tip="Đang tải chi tiết điện thoại..." />
+        <Spin size="large" tip={t('product.loading')} />
       </div>
     );
   }
 
   if (!product) {
-    return <div>Không tìm thấy thông tin sản phẩm.</div>;
+    return <div>{t('product.notFound')}</div>;
   }
+
+  const currentDisplayImage = selectedImage || product.thumbnail;
 
   return (
     <div style={{ background: '#ffffff', minHeight: '100%' }}>
       <Title level={2} style={{ margin: 0, fontWeight: 800, fontSize: 28 }}>
-        Shop
+        {t('common.shop')}
       </Title>
 
       <div
@@ -72,47 +76,55 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           justifyContent: 'space-between',
           alignItems: 'center',
           marginTop: 8,
-          marginBottom: 32,
-          borderBottom: '1px solid #000000',
-          paddingBottom: 12,
+          marginBottom: 36,
         }}
       >
-        <Space size={8}>
+        <Space size={8} style={{ fontSize: 16 }}>
           <span
             onClick={onBackToShop}
-            style={{
-              fontSize: 18,
-              color: '#333333',
-              cursor: 'pointer',
-            }}
+            style={{ cursor: 'pointer', color: '#666666', textDecoration: 'none' }}
           >
-            Shop
+            {t('common.shop')}
           </span>
-          <span style={{ fontSize: 18, color: '#333333' }}>/</span>
-          <span style={{ fontSize: 18, fontWeight: 700, color: '#000000' }}>
-            Product
-          </span>
+          <span style={{ color: '#999999' }}>&gt;</span>
+          <span style={{ color: '#000000', fontWeight: 600 }}>{product.title}</span>
         </Space>
 
-        <Badge count={totalItemsInCart} color="#B865D8" style={{ fontSize: 13 }}>
-          <ShoppingCartOutlined style={{ fontSize: 32, color: '#000000', cursor: 'pointer' }} />
+        <Badge count={totalItemsInCart} size="small" offset={[-2, 4]}>
+          <ShoppingCartOutlined
+            style={{ fontSize: 28, color: '#000000', cursor: 'pointer' }}
+            onClick={() => {
+              if (onBackToShop) {
+                window.location.href = '/cart';
+              }
+            }}
+          />
         </Badge>
       </div>
 
-      <div style={{ display: 'flex', gap: 60, flexWrap: 'wrap' }}>
-        <div style={{ width: 340, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: 60,
+          alignItems: 'flex-start',
+          flexWrap: 'wrap',
+        }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <div
             style={{
-              width: '100%',
+              width: 380,
               height: 380,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: 16,
+              background: '#ffffff',
+              border: '1px solid #f1f5f9',
+              borderRadius: 8,
             }}
           >
             <img
-              src={selectedImage || product.thumbnail}
+              src={currentDisplayImage}
               alt={product.title}
               style={{
                 maxWidth: '100%',
@@ -122,60 +134,50 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             />
           </div>
 
-          <div style={{ display: 'flex', gap: 12, marginTop: 16 }}>
-            {product.images && product.images.length > 0 ? (
-              product.images.slice(0, 4).map((img, idx) => (
+          {product.images && product.images.length > 0 && (
+            <div style={{ display: 'flex', gap: 14 }}>
+              {product.images.slice(0, 4).map((img, idx) => (
                 <div
                   key={idx}
                   onClick={() => setSelectedImage(img)}
                   style={{
-                    width: 60,
-                    height: 60,
-                    border: selectedImage === img ? '2px solid #01AEEF' : '1px solid #d9d9d9',
-                    borderRadius: 4,
+                    width: 70,
+                    height: 70,
                     padding: 4,
-                    cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
+                    border: currentDisplayImage === img ? '2px solid #01AEEF' : '1px solid #d9d9d9',
+                    borderRadius: 6,
+                    cursor: 'pointer',
+                    background: '#ffffff',
+                    transition: 'border 0.2s',
                   }}
                 >
                   <img
                     src={img}
-                    alt=""
-                    style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                    alt="thumbnail"
+                    style={{
+                      maxWidth: '100%',
+                      maxHeight: '100%',
+                      objectFit: 'contain',
+                    }}
                   />
                 </div>
-              ))
-            ) : (
-              <div
-                style={{
-                  width: 60,
-                  height: 60,
-                  border: '2px solid #01AEEF',
-                  borderRadius: 4,
-                  padding: 4,
-                }}
-              >
-                <img
-                  src={product.thumbnail}
-                  alt=""
-                  style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
-                />
-              </div>
-            )}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div style={{ flex: 1, minWidth: 320, maxWidth: 620 }}>
-          <Title level={3} style={{ margin: 0, fontWeight: 700, fontSize: 22, color: '#000000' }}>
+          <Title level={3} style={{ margin: 0, fontWeight: 700, fontSize: 24, color: '#000000' }}>
             {product.title}
           </Title>
 
           <Paragraph
             style={{
               fontSize: 15,
-              color: '#333333',
+              color: '#475569',
               lineHeight: 1.7,
               marginTop: 18,
               marginBottom: 20,
@@ -190,7 +192,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
               style={{
                 fontSize: 26,
                 fontWeight: 800,
-                color: '#000000',
+                color: '#01AEEF',
               }}
             >
               {formatPriceVND(product.price)}
@@ -203,7 +205,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
               allowHalf
               defaultValue={product.rating}
               style={{
-                fontSize: 32,
+                fontSize: 28,
                 color: '#F2C94C',
               }}
             />
@@ -220,15 +222,15 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 fontSize: 18,
                 height: 52,
                 padding: '0 36px',
-                borderRadius: 6,
-                boxShadow: 'none',
+                borderRadius: 8,
+                boxShadow: '0 4px 12px rgba(96, 195, 242, 0.3)',
               }}
               onClick={() => {
                 dispatch(addToCart({ product, quantity: 1 }));
-                message.success('Đã chọn Mua Ngay!');
+                message.success(t('product.buyNowSuccess'));
               }}
             >
-              Mua Ngay
+              {t('product.buyNow')}
             </Button>
 
             <Button
@@ -240,15 +242,15 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 fontSize: 18,
                 height: 52,
                 padding: '0 32px',
-                borderRadius: 6,
-                boxShadow: 'none',
+                borderRadius: 8,
+                boxShadow: '0 4px 12px rgba(119, 237, 75, 0.3)',
               }}
               onClick={() => {
                 dispatch(addToCart({ product, quantity: 1 }));
-                message.success(`Đã thêm "${product.title}" vào giỏ hàng!`);
+                message.success(t('product.addedSuccess', { title: product.title }));
               }}
             >
-              Thêm vào giỏ hàng
+              {t('product.addToCart')}
             </Button>
           </div>
         </div>

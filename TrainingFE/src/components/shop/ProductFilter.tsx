@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from '../../i18n/index.ts';
 
 export interface ProductFilterProps {
   minPrice: number;
@@ -33,42 +34,6 @@ const ChevronDown: React.FC<{ isOpen?: boolean }> = ({ isOpen }) => (
   </svg>
 );
 
-const priceFromOptions = [
-  { label: '0 VNĐ', value: 0 },
-  { label: '2 000 000 VNĐ', value: 2000000 },
-  { label: '5 000 000 VNĐ', value: 5000000 },
-  { label: '10 000 000 VNĐ', value: 10000000 },
-  { label: '15 000 000 VNĐ', value: 15000000 },
-  { label: '20 000 000 VNĐ', value: 20000000 },
-];
-
-const priceToOptions = [
-  { label: '5 000 000 VNĐ', value: 5000000 },
-  { label: '10 000 000 VNĐ', value: 10000000 },
-  { label: '15 000 000 VNĐ', value: 15000000 },
-  { label: '20 000 000 VNĐ', value: 20000000 },
-  { label: '30 000 000 VNĐ', value: 30000000 },
-  { label: '50 000 000 VNĐ', value: 50000000 },
-  { label: 'Tất cả', value: null },
-];
-
-const ratingFromOptions = [
-  { label: '0 Sao', value: 0 },
-  { label: '1 Sao', value: 1 },
-  { label: '2 Sao', value: 2 },
-  { label: '3 Sao', value: 3 },
-  { label: '4 Sao', value: 4 },
-  { label: '5 Sao', value: 5 },
-];
-
-const ratingToOptions = [
-  { label: '1 Sao', value: 1 },
-  { label: '2 Sao', value: 2 },
-  { label: '3 Sao', value: 3 },
-  { label: '4 Sao', value: 4 },
-  { label: '5 Sao', value: 5 },
-];
-
 export const ProductFilter: React.FC<ProductFilterProps> = ({
   minPrice,
   maxPrice,
@@ -77,8 +42,42 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
   onChangePrice,
   onChangeRating,
 }) => {
+  const { t } = useTranslation();
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const currencyText = t('filter.currency');
+  const allText = t('filter.all');
+  const formatStars = (val: number) => `${val} ${val <= 1 ? t('filter.star') : t('filter.stars')}`;
+
+  const priceFromOptions = [
+    { label: `0 ${currencyText}`, value: 0 },
+    { label: `2 000 000 ${currencyText}`, value: 2000000 },
+    { label: `5 000 000 ${currencyText}`, value: 5000000 },
+    { label: `10 000 000 ${currencyText}`, value: 10000000 },
+    { label: `15 000 000 ${currencyText}`, value: 15000000 },
+    { label: `20 000 000 ${currencyText}`, value: 20000000 },
+  ];
+
+  const priceToOptions = [
+    { label: `5 000 000 ${currencyText}`, value: 5000000 },
+    { label: `10 000 000 ${currencyText}`, value: 10000000 },
+    { label: `15 000 000 ${currencyText}`, value: 15000000 },
+    { label: `20 000 000 ${currencyText}`, value: 20000000 },
+    { label: `30 000 000 ${currencyText}`, value: 30000000 },
+    { label: `50 000 000 ${currencyText}`, value: 50000000 },
+    { label: allText, value: null },
+  ];
+
+  const ratingFromOptions = [0, 1, 2, 3, 4, 5].map((val) => ({
+    label: formatStars(val),
+    value: val,
+  }));
+
+  const ratingToOptions = [1, 2, 3, 4, 5].map((val) => ({
+    label: formatStars(val),
+    value: val,
+  }));
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -91,9 +90,9 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
   }, []);
 
   const formatPriceText = (val: number | null): string => {
-    if (val === null) return 'Tất cả';
-    if (val === 0) return '0 VNĐ';
-    return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' VNĐ';
+    if (val === null) return allText;
+    if (val === 0) return `0 ${currencyText}`;
+    return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ` ${currencyText}`;
   };
 
   const renderDropdownRow = (
@@ -213,7 +212,7 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
           borderBottom: '1px solid #000000',
         }}
       >
-        Filter
+        {t('filter.title')}
       </div>
 
       {/* Body */}
@@ -229,12 +228,12 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
               marginBottom: 12,
             }}
           >
-            Giá
+            {t('filter.price')}
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {renderDropdownRow(
-              'Từ:',
+              t('filter.from'),
               'minPrice',
               formatPriceText(minPrice),
               priceFromOptions,
@@ -247,7 +246,7 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
             )}
 
             {renderDropdownRow(
-              'Đến:',
+              t('filter.to'),
               'maxPrice',
               formatPriceText(maxPrice),
               priceToOptions,
@@ -275,14 +274,14 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
               marginBottom: 12,
             }}
           >
-            Đánh giá
+            {t('filter.rating')}
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {renderDropdownRow(
-              'Từ:',
+              t('filter.from'),
               'minRating',
-              `${minRating} Sao`,
+              formatStars(minRating),
               ratingFromOptions,
               (val) => {
                 const newMin = val ?? 0;
@@ -293,9 +292,9 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({
             )}
 
             {renderDropdownRow(
-              'Đến:',
+              t('filter.to'),
               'maxRating',
-              `${maxRating} Sao`,
+              formatStars(maxRating),
               ratingToOptions,
               (val) => {
                 const newMax = val ?? 5;
