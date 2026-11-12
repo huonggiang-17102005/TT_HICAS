@@ -121,7 +121,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ onSelectProduct }) => {
             <FilterFilled
               style={{
                 fontSize: 28,
-                color: '#01AEEF',
+                color: '#000000',
                 cursor: 'pointer',
                 transition: 'transform 0.2s',
               }}

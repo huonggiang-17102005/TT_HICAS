@@ -58,5 +58,19 @@
     "companyAddress": "Địa chỉ công ty:",
     "homeAddress": "Địa chỉ nhà riêng:",
     "email": "Email:"
+  },
+  "login": {
+    "title": "Đăng nhập",
+    "username": "Tên đăng nhập",
+    "usernameRequired": "Vui lòng nhập tên đăng nhập!",
+    "password": "Mật khẩu",
+    "passwordRequired": "Vui lòng nhập mật khẩu!",
+    "remember": "Lưu đăng nhập",
+    "forgotPassword": "Bạn quên mật khẩu?",
+    "submit": "Đăng nhập",
+    "success": "Xin chào, {{name}}!",
+    "error": "Tên đăng nhập hoặc mật khẩu không đúng!",
+    "contact": "Nếu bạn có thắc mắc hay cần giải đáp, vui lòng liên hệ số điện thoại:",
+    "copyright": "Bản quyền thuộc về AnyBim"
   }
 }

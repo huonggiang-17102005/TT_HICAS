@@ -58,5 +58,19 @@
     "companyAddress": "Address Company:",
     "homeAddress": "Address Home:",
     "email": "Email:"
+  },
+  "login": {
+    "title": "Login",
+    "username": "Username",
+    "usernameRequired": "Please enter username!",
+    "password": "Password",
+    "passwordRequired": "Please enter password!",
+    "remember": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "submit": "Sign In",
+    "success": "Welcome, {{name}}!",
+    "error": "Incorrect username or password!",
+    "contact": "If you have any questions or support, please contact:",
+    "copyright": "Copyright belong to AnyBim"
   }
 }

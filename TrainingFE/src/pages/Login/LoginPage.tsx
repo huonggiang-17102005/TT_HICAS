@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Checkbox, message } from 'antd';
+import { Form, Input, Button, Checkbox, message, Select } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import logo from '../../assets/logo.png';
 import loginBg from '../../assets/login.png';
 import { userService } from '../../services/userService.ts';
 import { useCart } from '../../hooks/useCart.ts';
 
 export const LoginPage: React.FC = () => {
+  const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const { syncCartForUser } = useCart();
@@ -18,15 +20,22 @@ export const LoginPage: React.FC = () => {
       const res = await userService.login(values.username, values.password);
       localStorage.setItem('auth_user', JSON.stringify(res));
       localStorage.setItem('access_token', res.accessToken);
-      message.success(`Xin chào, ${res.firstName} ${res.lastName}!`);
+      message.success(t('login.success', { name: `${res.firstName} ${res.lastName}` }));
       syncCartForUser();
       navigate('/shop');
     } catch {
-      message.error('Tên đăng nhập hoặc mật khẩu không đúng!');
+      message.error(t('login.error'));
     } finally {
       setLoading(false);
     }
   };
+
+  const handleLanguageChange = (lng: string) => {
+    i18n.changeLanguage(lng);
+    localStorage.setItem('app_language', lng);
+  };
+
+  const currentLang = i18n.language && i18n.language.startsWith('en') ? 'en' : 'vi';
 
   return (
     <div
@@ -46,6 +55,19 @@ export const LoginPage: React.FC = () => {
         padding: '20px 20px 80px',
       }}
     >
+      {/* Nút chuyển ngôn ngữ ở góc trên bên phải trang login */}
+      <div style={{ position: 'absolute', top: 20, right: 28 }}>
+        <Select
+          value={currentLang}
+          onChange={handleLanguageChange}
+          style={{ width: 72 }}
+          options={[
+            { value: 'vi', label: 'VN' },
+            { value: 'en', label: 'EN' },
+          ]}
+        />
+      </div>
+
       <div
         style={{
           width: 96,
@@ -71,12 +93,12 @@ export const LoginPage: React.FC = () => {
         >
           <Form.Item
             name="username"
-            rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập!' }]}
+            rules={[{ required: true, message: t('login.usernameRequired') }]}
             style={{ marginBottom: 20 }}
           >
             <Input
               size="large"
-              placeholder="Tên đăng nhập"
+              placeholder={t('login.username')}
               prefix={
                 <div
                   style={{
@@ -105,12 +127,12 @@ export const LoginPage: React.FC = () => {
 
           <Form.Item
             name="password"
-            rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
+            rules={[{ required: true, message: t('login.passwordRequired') }]}
             style={{ marginBottom: 12 }}
           >
             <Input.Password
               size="large"
-              placeholder="Mật khẩu"
+              placeholder={t('login.password')}
               prefix={
                 <div
                   style={{
@@ -146,7 +168,7 @@ export const LoginPage: React.FC = () => {
             }}
           >
             <Form.Item name="remember" valuePropName="checked" noStyle>
-              <Checkbox style={{ color: '#ffffff', fontSize: 14 }}>Lưu đăng nhập</Checkbox>
+              <Checkbox style={{ color: '#ffffff', fontSize: 14 }}>{t('login.remember')}</Checkbox>
             </Form.Item>
             <span
               style={{
@@ -154,9 +176,9 @@ export const LoginPage: React.FC = () => {
                 cursor: 'pointer',
                 fontSize: 14,
               }}
-              onClick={() => message.info('Vui lòng liên hệ tổng đài 19001000 để lấy lại mật khẩu!')}
+              onClick={() => message.info(t('login.forgotPassword'))}
             >
-              Bạn quên mật khẩu?
+              {t('login.forgotPassword')}
             </span>
           </div>
 
@@ -178,7 +200,7 @@ export const LoginPage: React.FC = () => {
                 boxShadow: 'none',
               }}
             >
-              Đăng nhập
+              {t('login.submit')}
             </Button>
           </Form.Item>
         </Form>
@@ -197,9 +219,9 @@ export const LoginPage: React.FC = () => {
         }}
       >
         <div>
-          Nếu bạn có thắc mắc hay cần giải đáp, vui lòng liên hệ số điện thoại: <strong>19001000</strong>
+          {t('login.contact')} <strong>19001000</strong>
         </div>
-        <div>Bản quyền thuộc về AnyBim</div>
+        <div>{t('login.copyright')}</div>
       </div>
     </div>
   );
