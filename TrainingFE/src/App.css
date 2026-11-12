@@ -1,8 +1,10 @@
 .ant-menu-item-selected {
   color: #01AEEF !important;
-  background-color: transparent !important;
-  border-bottom: 1px solid #01AEEF;
+  background-color: #f0f9ff !important;
+  border-right: 3px solid #01AEEF;
+  border-bottom: 1px solid #e0f2fe !important;
   border-radius: 0 !important;
+  font-weight: 600;
 }
 
 .ant-menu-item-selected .anticon {
@@ -10,14 +12,43 @@
 }
 
 .ant-menu-item {
-  color: #000000 !important;
+  color: #334155 !important;
   height: 56px !important;
   line-height: 56px !important;
   margin: 0 !important;
   width: 100% !important;
   border-radius: 0 !important;
+  transition: all 0.2s ease !important;
+}
+
+.ant-menu-item:hover {
+  background-color: #f8fafc !important;
+  color: #01AEEF !important;
+}
+
+.ant-menu-item:hover .anticon {
+  color: #01AEEF !important;
 }
 
 .ant-menu-item .anticon {
-  color: #000000;
+  color: #475569;
+  transition: color 0.2s ease;
+}
+
+button {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.app-main-content {
+  scroll-behavior: smooth;
+}
+
+/* Ô nhập số lượng giỏ hàng hình vuông căn giữa hoàn hảo */
+.cart-qty-square-input:focus {
+  border-color: #01AEEF !important;
+  box-shadow: 0 0 0 2px rgba(1, 174, 239, 0.25);
+}
+
+.cart-qty-square-btn:hover:not(:disabled) {
+  background-color: #e2e8f0 !important;
 }

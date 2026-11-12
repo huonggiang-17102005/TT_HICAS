@@ -1,0 +1,62 @@
+{
+  "common": {
+    "shop": "Shop",
+    "cart": "Cart",
+    "profile": "My Profile",
+    "product": "Product",
+    "language": "Language",
+    "menu": "Menu",
+    "vnd": "VND"
+  },
+  "shop": {
+    "title": "Shop",
+    "searchPlaceholder": "Search smartphones...",
+    "category": "Category",
+    "all": "All",
+    "emptyFilter": "No products match the selected filter!",
+    "loading": "Loading data..."
+  },
+  "filter": {
+    "title": "Filter",
+    "price": "Price",
+    "rating": "Rating",
+    "from": "From:",
+    "to": "To:",
+    "all": "All",
+    "star": "Star",
+    "stars": "Stars",
+    "currency": "VND"
+  },
+  "product": {
+    "loading": "Loading phone details...",
+    "notFound": "Product information not found.",
+    "loadError": "Unable to load product details!",
+    "buyNow": "Buy Now",
+    "addToCart": "Add to Cart",
+    "buyNowSuccess": "Selected Buy Now!",
+    "addedSuccess": "Added \"{{title}}\" to cart!"
+  },
+  "cart": {
+    "title": "Cart",
+    "itemsInBag": "{{count}} items in bag",
+    "itemInBag": "{{count}} item in bag",
+    "emptyCart": "Your shopping cart is empty!",
+    "backToShop": "Back to Shop",
+    "subtotal": "SubTotal",
+    "tax": "Tax",
+    "total": "Total"
+  },
+  "profile": {
+    "title": "My Profile",
+    "loading": "Loading profile information...",
+    "loadError": "Unable to load profile information!",
+    "dob": "Date of birth:",
+    "gender": "Sex:",
+    "male": "Male",
+    "female": "Female",
+    "other": "Other",
+    "companyAddress": "Address Company:",
+    "homeAddress": "Address Home:",
+    "email": "Email:"
+  }
+}

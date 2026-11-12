@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Typography, Rate, Button, Spin, Space, Badge, message } from 'antd';
 import { ShoppingCartOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import type { IProduct } from '../../types/product.types.ts';
 import { useProductDetail } from '../../hooks/useProducts.ts';
 import { useCart } from '../../hooks/useCart.ts';
@@ -18,6 +19,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
   productId = 1,
   onBackToShop,
 }) => {
+  const { t } = useTranslation();
   const { data: product, isLoading: loading } = useProductDetail(productId);
   const { addToCart, totalItemsCount } = useCart();
   const [activeImage, setActiveImage] = useState<string>('');
@@ -30,13 +32,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: '100px 0' }}>
-        <Spin size="large" tip="Đang tải chi tiết điện thoại..." />
+        <Spin size="large" tip={t('product.loading')} />
       </div>
     );
   }
 
   if (!product) {
-    return <div>Không tìm thấy thông tin sản phẩm.</div>;
+    return <div>{t('product.notFound')}</div>;
   }
 
   const currentDisplayImage = activeImage || product.thumbnail;
@@ -44,7 +46,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
   return (
     <div style={{ background: '#ffffff', minHeight: '100%' }}>
       <Title level={2} style={{ margin: 0, fontWeight: 800, fontSize: 28 }}>
-        Shop
+        {t('common.shop')}
       </Title>
 
       <div
@@ -61,7 +63,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             onClick={onBackToShop}
             style={{ cursor: 'pointer', color: '#666666', textDecoration: 'none' }}
           >
-            Shop
+            {t('common.shop')}
           </span>
           <span style={{ color: '#999999' }}>&gt;</span>
           <span style={{ color: '#000000', fontWeight: 600 }}>{product.title}</span>
@@ -96,6 +98,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
               alignItems: 'center',
               justifyContent: 'center',
               background: '#ffffff',
+              border: '1px solid #f1f5f9',
+              borderRadius: 8,
             }}
           >
             <img
@@ -123,9 +127,10 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                     alignItems: 'center',
                     justifyContent: 'center',
                     border: currentDisplayImage === img ? '2px solid #01AEEF' : '1px solid #d9d9d9',
-                    borderRadius: 4,
+                    borderRadius: 6,
                     cursor: 'pointer',
                     background: '#ffffff',
+                    transition: 'border 0.2s',
                   }}
                 >
                   <img
@@ -144,14 +149,14 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
         </div>
 
         <div style={{ flex: 1, minWidth: 320, maxWidth: 620 }}>
-          <Title level={3} style={{ margin: 0, fontWeight: 700, fontSize: 22, color: '#000000' }}>
+          <Title level={3} style={{ margin: 0, fontWeight: 700, fontSize: 24, color: '#000000' }}>
             {product.title}
           </Title>
 
           <Paragraph
             style={{
               fontSize: 15,
-              color: '#333333',
+              color: '#475569',
               lineHeight: 1.7,
               marginTop: 18,
               marginBottom: 20,
@@ -166,7 +171,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
               style={{
                 fontSize: 26,
                 fontWeight: 800,
-                color: '#000000',
+                color: '#01AEEF',
               }}
             >
               {formatPriceVND(product.price)}
@@ -179,7 +184,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
               allowHalf
               defaultValue={product.rating}
               style={{
-                fontSize: 32,
+                fontSize: 28,
                 color: '#F2C94C',
               }}
             />
@@ -196,15 +201,15 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 fontSize: 18,
                 height: 52,
                 padding: '0 36px',
-                borderRadius: 6,
-                boxShadow: 'none',
+                borderRadius: 8,
+                boxShadow: '0 4px 12px rgba(96, 195, 242, 0.3)',
               }}
               onClick={async () => {
                 await addToCart(product, 1);
-                message.success('Đã chọn Mua Ngay!');
+                message.success(t('product.buyNowSuccess'));
               }}
             >
-              Mua Ngay
+              {t('product.buyNow')}
             </Button>
 
             <Button
@@ -216,15 +221,15 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 fontSize: 18,
                 height: 52,
                 padding: '0 32px',
-                borderRadius: 6,
-                boxShadow: 'none',
+                borderRadius: 8,
+                boxShadow: '0 4px 12px rgba(119, 237, 75, 0.3)',
               }}
               onClick={async () => {
                 await addToCart(product, 1);
-                message.success(`Đã thêm "${product.title}" vào giỏ hàng!`);
+                message.success(t('product.addedSuccess', { title: product.title }));
               }}
             >
-              Thêm vào giỏ hàng
+              {t('product.addToCart')}
             </Button>
           </div>
         </div>

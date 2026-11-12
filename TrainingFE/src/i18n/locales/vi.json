@@ -1,0 +1,62 @@
+{
+  "common": {
+    "shop": "Cửa hàng",
+    "cart": "Giỏ hàng",
+    "profile": "Hồ sơ của tôi",
+    "product": "Sản phẩm",
+    "language": "Ngôn ngữ",
+    "menu": "Menu",
+    "vnd": "VND"
+  },
+  "shop": {
+    "title": "Cửa hàng",
+    "searchPlaceholder": "Tìm kiếm điện thoại thông minh...",
+    "category": "Danh mục",
+    "all": "Tất cả",
+    "emptyFilter": "Không tìm thấy sản phẩm nào phù hợp bộ lọc!",
+    "loading": "Đang tải dữ liệu..."
+  },
+  "filter": {
+    "title": "Bộ lọc",
+    "price": "Giá",
+    "rating": "Đánh giá",
+    "from": "Từ:",
+    "to": "Đến:",
+    "all": "Tất cả",
+    "star": "Sao",
+    "stars": "Sao",
+    "currency": "VNĐ"
+  },
+  "product": {
+    "loading": "Đang tải chi tiết điện thoại...",
+    "notFound": "Không tìm thấy thông tin sản phẩm.",
+    "loadError": "Không thể tải chi tiết sản phẩm!",
+    "buyNow": "Mua Ngay",
+    "addToCart": "Thêm vào giỏ hàng",
+    "buyNowSuccess": "Đã chọn Mua Ngay!",
+    "addedSuccess": "Đã thêm \"{{title}}\" vào giỏ hàng!"
+  },
+  "cart": {
+    "title": "Giỏ hàng",
+    "itemsInBag": "{{count}} sản phẩm trong giỏ",
+    "itemInBag": "{{count}} sản phẩm trong giỏ",
+    "emptyCart": "Giỏ hàng của bạn đang trống!",
+    "backToShop": "Quay lại mua sắm",
+    "subtotal": "Tạm tính",
+    "tax": "Thuế",
+    "total": "Tổng cộng"
+  },
+  "profile": {
+    "title": "Hồ sơ cá nhân",
+    "loading": "Đang tải thông tin cá nhân...",
+    "loadError": "Không thể tải thông tin cá nhân!",
+    "dob": "Ngày sinh:",
+    "gender": "Giới tính:",
+    "male": "Nam",
+    "female": "Nữ",
+    "other": "Khác",
+    "companyAddress": "Địa chỉ công ty:",
+    "homeAddress": "Địa chỉ nhà riêng:",
+    "email": "Email:"
+  }
+}

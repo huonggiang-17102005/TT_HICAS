@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Row, Col, Input, Spin, Typography, Space, Empty, Popover } from 'antd';
 import { SearchOutlined, FilterFilled } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import { ProductCard } from '../../components/shop/ProductCard.tsx';
 import { ProductFilter } from '../../components/shop/ProductFilter.tsx';
 import { useProducts, useSearchProducts } from '../../hooks/useProducts.ts';
@@ -12,6 +13,7 @@ interface ShopPageProps {
 }
 
 export const ShopPage: React.FC<ShopPageProps> = ({ onSelectProduct }) => {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [activeSearch, setActiveSearch] = useState<string>('');
 
@@ -49,7 +51,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ onSelectProduct }) => {
           color: '#000000',
         }}
       >
-        Shop
+        {t('shop.title')}
       </Title>
 
       <div
@@ -61,11 +63,11 @@ export const ShopPage: React.FC<ShopPageProps> = ({ onSelectProduct }) => {
           marginBottom: 32,
         }}
       >
-        <Text style={{ fontSize: 18, color: '#333333' }}>Shop</Text>
+        <Text style={{ fontSize: 18, color: '#333333' }}>{t('common.shop')}</Text>
 
         <Space size={16} align="center">
           <Input
-            placeholder="Search..."
+            placeholder={t('shop.searchPlaceholder')}
             value={searchTerm}
             suffix={<SearchOutlined style={{ fontSize: 20, color: '#000000' }} />}
             onPressEnter={(e) => setActiveSearch((e.target as HTMLInputElement).value.trim())}
@@ -78,9 +80,9 @@ export const ShopPage: React.FC<ShopPageProps> = ({ onSelectProduct }) => {
             style={{
               width: 280,
               height: 42,
-              borderRadius: 0,
-              border: '1px solid #000000',
-              fontSize: 16,
+              borderRadius: 6,
+              border: '1px solid #d9d9d9',
+              fontSize: 15,
             }}
           />
           <Popover
@@ -110,17 +112,18 @@ export const ShopPage: React.FC<ShopPageProps> = ({ onSelectProduct }) => {
             }}
             overlayInnerStyle={{
               padding: 0,
-              borderRadius: 0,
+              borderRadius: 8,
               border: 'none',
               background: 'transparent',
-              boxShadow: 'none',
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
             }}
           >
             <FilterFilled
               style={{
                 fontSize: 28,
-                color: '#000000',
+                color: '#01AEEF',
                 cursor: 'pointer',
+                transition: 'transform 0.2s',
               }}
             />
           </Popover>
@@ -129,10 +132,10 @@ export const ShopPage: React.FC<ShopPageProps> = ({ onSelectProduct }) => {
 
       {loading ? (
         <div style={{ textAlign: 'center', padding: '80px 0' }}>
-          <Spin size="large" tip="Đang tải dữ liệu..." />
+          <Spin size="large" tip={t('shop.loading')} />
         </div>
       ) : filteredProducts.length === 0 ? (
-        <Empty description="Không tìm thấy sản phẩm nào phù hợp bộ lọc!" />
+        <Empty description={t('shop.emptyFilter')} />
       ) : (
         <Row gutter={[32, 28]}>
           {filteredProducts.map((item) => (
